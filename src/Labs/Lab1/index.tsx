@@ -64,8 +64,19 @@ export default function Lab1() {
         </ol>
         
         My favorite recipe:
-        <ol id="wd-your-favorite-recipe">
-          Todo
+        <ol id="wd-my-favorite-recipe">
+          <li>Place the whole milk, heavy cream, sugar, vanilla seeds
+              and pod, and salt in a medium saucepan over medium heat.
+          </li>
+          <li>Stir continuously util sugar dissolves, reducing to 
+              medium-low heat as needed to prevent a simmer.
+          </li>
+          <li>Once dissolved, remove from heat and chill.</li>
+          <li>Using a slotted spoon, remove the vanilla pods.</li>
+          <li>Transfer the ice cream mixture to the ice cream maker and
+              churn according to its instructions.
+          </li>
+          <li>Enjoy right away in a bowl or cone, or store immediately!</li>
         </ol>
 
         <h5>Unordered List Tag</h5>
@@ -79,8 +90,10 @@ export default function Lab1() {
         </ul>
 
         Your favorite books (in no particular order)
-        <ul id="wd=your-books">
-          Todo
+        <ul id="wd-your-books">
+          <li>Dream of the Red Chamber</li>
+          <li>Romance of the Three Kingdoms</li>
+          <li>The Return of the Condor Heroes</li>
         </ul>
       </div>
       
