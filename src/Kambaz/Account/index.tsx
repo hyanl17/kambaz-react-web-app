@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router"
+import { Routes, Route, Navigate } from "react-router";
 import Signin from "./Signin";
 import Profile from "./Profile";
 import Signup from "./Signup";
