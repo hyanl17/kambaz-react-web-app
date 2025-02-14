@@ -1,5 +1,23 @@
 import "./index.css";
 import { Container } from "react-bootstrap";
+import ForegroundColors from "./ForegroundColors";
+import BackgroundColors from "./BackgroundColors";
+import Borders from "./Borders";
+import Padding from "./Padding";
+import Margins from "./Margins";
+import Positions from "./Positions";
+import Zindex from "./Zindex";
+import Float from "./Float";
+import GridLayout from "./GridLayout";
+import Flex from "./Flex";
+import ReactIcons from "./ReactIcons";
+import BootstrapGrids from "./BootstrapGrids";
+import ScreenSizeLabel from "./ScreenSizeLabel";
+import BootstrapTables from "./BootstrapTables";
+import BootstrapLists from "./BootstrapLists";
+import BootstrapForms from "./BootstrapForms";
+import BootstrapNavigation from "./BootstrapNavigation";
+import Dimensions from "./Dimensions";
 
 export default function Lab2() {
   return (
@@ -17,12 +35,12 @@ export default function Lab2() {
         <div id="wd-css-id-selectors">
           <h3>ID selectors</h3>
           <p id="wd-id-selector-1">
-            Instead of changing the look and feel of all the 
-            elements of the same name, e.g., P, we can refer 
+            Instead of changing the look and feel of all the
+            elements of the same name, e.g., P, we can refer
             to a specific element by its ID
           </p>
           <p id="wd-id-selector-2">
-            Here's another paragraph using a different ID and 
+            Here's another paragraph using a different ID and
             a different look andfeel
           </p>
         </div>
@@ -30,7 +48,7 @@ export default function Lab2() {
         <div id="wd-css-class-selectors">
           <h3>Class selectors</h3>
           <p className="wd-class-selector">
-            Instead of using IDs to refer to elements, you can 
+            Instead of using IDs to refer to elements, you can
             use an element's CLASS attribute
           </p>
           <h4 className="wd-class-selector">
@@ -60,7 +78,97 @@ export default function Lab2() {
               </p>
             </div>
           </div>
-        </div>      
+        </div>
+
+        <br />
+        <div id="wd-css-foreground-colors">
+          <ForegroundColors />
+        </div>
+
+        <br />
+        <div id="wd-css-background-colors">
+          <BackgroundColors />
+        </div>
+
+        <br />
+        <div id="wd-css-borders">
+          <Borders />
+        </div>
+
+        <br />
+        <div id="wd-css-paddings">
+          <Padding />
+        </div>
+
+        <br />
+        <div id="wd-css-margins">
+          <Margins />
+        </div>
+
+        <br />
+        <div id="wd-css-dimensions">
+          <Dimensions />
+        </div>
+
+        <br />
+        <div id="wd-css-positions">
+          <Positions />
+        </div>
+
+        <br />
+        <div id="wd-z-index">
+          <Zindex />
+        </div>
+
+        <br />
+        <div id="wd-float-divs">
+          <Float />
+        </div>
+
+        <br />
+        <div id="wd-css-grid-layout">
+          <GridLayout />
+        </div>
+
+        <br />
+        <div id="wd-css-flex">
+          <Flex />
+        </div>
+
+        <br />
+        <div id="wd-react-icons">
+          <ReactIcons />
+        </div>
+
+        <br />
+        <div id="wd-bs-grid">
+          <BootstrapGrids />
+        </div>
+
+        <br />
+        <div id="wd-screen-size-label">
+          <ScreenSizeLabel />
+        </div>
+
+        <br />
+        <div id="wd-bootstrap-tb">
+          <BootstrapTables />
+        </div>
+
+        <br />
+        <div id="wd-bootstrap-lists">
+          <BootstrapLists />
+        </div>
+
+        <br />
+        <div id="wd-bootstrap-form">
+          <BootstrapForms />
+        </div>
+
+        <br />
+        <div id="wd-bootstrap-nav">
+          <BootstrapNavigation />
+        </div>
       </div>
     </Container>
   )
