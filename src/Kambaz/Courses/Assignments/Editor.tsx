@@ -1,24 +1,29 @@
-import { Form, FormControl, Button } from "react-bootstrap"
+import { Form, FormControl, Button } from "react-bootstrap";
+import { useParams } from 'react-router';
+import * as db from "../../Database";
 
 export default function AssignmentEditor() {
+  const { aid } = useParams();
+  const assignment = db.assignments.find((assignment) => assignment._id === aid);
+
   return (
     <div id="wd-assignments-editor">
       <Form className="fs-5">
         <Form.Group id="wd-name" className="mb-3">
           <Form.Label>Assignment Name</Form.Label>
-          <Form.Control placeholder="A1 - ENV + HTML" />
+          <input type="text" className="form-control" value={assignment?.title} />
         </Form.Group>
       </Form>
 
       <FormControl id="wd-description" className="mb-3" as="textarea">
-        The assignment is available online.
+        <input type="text" className="form-control" value={assignment?.description} />
       </FormControl>
 
       <Form.Group id="wd-points" className="mb-3 d-flex">
         <Form.Label className="me-2 mt-2 w-50 text-end">
           Points
         </Form.Label>
-        <Form.Control type="number" placeholder="100" />
+        <input type="number" className="form-control" placeholder="100" />
       </Form.Group>
 
       <Form.Group id="wd-group" className="mb-3 d-flex">
