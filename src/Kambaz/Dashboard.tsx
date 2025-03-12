@@ -30,7 +30,7 @@ export default function Dashboard(
       }
       <hr />
       <h2 id="wd-dashboard-published">Published Courses ({courses.filter((course) => isEnrolled(course._id)).length})</h2> <hr />
-      {currentUser.role === 'FACULTY' &&
+      {["FACULTY", "ADMIN"].includes(currentUser.role) &&
         <>
           <h5>New Course
             <button className="btn btn-primary float-end"

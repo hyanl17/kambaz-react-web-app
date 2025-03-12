@@ -15,7 +15,7 @@ const assignmentsSlice = createSlice({
         _id: uuidv4(),
         title: assignment.title,
         course: assignment.course,
-        pts: assignment.pts,
+        points: assignment.points,
         description: assignment.description,
         from: assignment.from,
         due: assignment.due,

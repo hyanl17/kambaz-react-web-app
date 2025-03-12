@@ -10,7 +10,7 @@ export default function Home() {
         <Modules />
       </div>
       <div className="d-none d-xl-block">
-        {currentUser.role === 'FACULTY' &&
+        {["FACULTY", "ADMIN"].includes(currentUser.role) &&
           <CourseStatus />
         }
       </div>

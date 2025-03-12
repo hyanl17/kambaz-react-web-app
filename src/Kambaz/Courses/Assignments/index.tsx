@@ -74,7 +74,7 @@ export default function Assignments() {
                 </div>
               </div>
               <div className="d-flex align-items-center gap-2">
-                {currentUser.role === "FACULTY" && (
+                {["FACULTY", "ADMIN"].includes(currentUser.role) && (
                   <>
                     <FaPencil
                       onClick={() =>

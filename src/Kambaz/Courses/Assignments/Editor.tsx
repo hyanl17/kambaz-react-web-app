@@ -38,8 +38,8 @@ export default function AssignmentEditor() {
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm={3} className="text-end wd-points"> Points </Form.Label>
           <Col sm={9}>
-            <Form.Control type="textarea" value={assignment?.pts || ""} className="wd-points"
-              onChange={(e) => setAssignment({ ...assignment, pts: e.target.value })} />
+            <Form.Control type="textarea" value={assignment?.points || ""} className="wd-points"
+              onChange={(e) => setAssignment({ ...assignment, points: e.target.value })} />
           </Col>
         </Form.Group>
 
@@ -129,7 +129,7 @@ export default function AssignmentEditor() {
                 title: assignment.title,
                 description: assignment.description,
                 course: cid,
-                pts: assignment.pts,
+                points: assignment.points,
                 due: assignment.due,
                 from: assignment.from,
                 until: assignment.until

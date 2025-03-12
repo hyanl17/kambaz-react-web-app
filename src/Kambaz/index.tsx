@@ -14,7 +14,7 @@ export default function Kambaz() {
   const [course, setCourse] = useState<any>({
     _id: "1234", name: "New Course", number: "New Number",
     startDate: "2023-09-10", endDate: "2023-12-15", description: "New Description",
-    image: "/images/reactjs.jpg",
+    image: "/images/CS.jpg",
   });
   const addNewCourse = () => {
     setCourses([...courses, { ...course, _id: uuidv4() }]);
