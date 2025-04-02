@@ -1,5 +1,5 @@
 import { Button, ListGroup } from "react-bootstrap";
-import { FaPlus, FaPencil, FaTrash } from "react-icons/fa6";
+import { FaPlus, FaPencil } from "react-icons/fa6";
 import { BsGripVertical, BsPlus } from "react-icons/bs";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { IoEllipsisVertical } from "react-icons/io5";
@@ -8,7 +8,10 @@ import AssignmentControlButtons from "./AssignmentControlButtons";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteAssignment } from "./reducer";
+import { deleteAssignment, setAssignments } from "./reducer";
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
+import { useEffect } from "react";
 
 export default function Assignments() {
   const { cid } = useParams();
@@ -16,20 +19,37 @@ export default function Assignments() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const fetchAssignments = async () => {
+    const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+    dispatch(setAssignments(assignments));
+  };
+  const removeAssignment = async (assignmentId: string) => {
+    await assignmentsClient.deleteAssignment(assignmentId);
+    dispatch(deleteAssignment(assignmentId));
+  };
+  const addAssignment = () => {
+    navigate(`/Kambaz/Courses/${cid}/Assignments/new`);
+  };
+  const isFacultyOrAdmin = ["FACULTY", "ADMIN"].includes(currentUser?.role);
+  useEffect(() => {
+    fetchAssignments();
+  }, []);
 
   return (
     <div>
-      <div>
-        <input id="wd-search-assignment" className="me-2" placeholder="Search..." />
-        <Button id="wd-add-group" className="me-2" variant="secondary">
-          <FaPlus className="me-2" />
-          Group
-        </Button>
-        <Button id="wd-add-assignment" className="me-2" variant="danger">
-          <FaPlus className="me-2" />
-          Assignment
-        </Button>
-      </div>
+      {isFacultyOrAdmin && (
+        <div>
+          <input id="wd-search-assignment" className="me-2" placeholder="Search..." />
+          <Button id="wd-add-group" className="me-2" variant="secondary">
+            <FaPlus className="me-2" />
+            Group
+          </Button>
+          <Button id="wd-add-assignment" className="me-2" variant="danger" onClick={addAssignment}>
+            <FaPlus className="me-2" />
+            Assignment
+          </Button>
+        </div>
+      )}
 
       <ListGroup id="wd-assignments" className="rounded-0 mt-2">
         <ListGroup.Item id="wd-assignment-title" className="p-0 border-gray">
@@ -73,22 +93,18 @@ export default function Assignments() {
                   </span>
                 </div>
               </div>
-              <div className="d-flex align-items-center gap-2">
-                {["FACULTY", "ADMIN"].includes(currentUser.role) && (
+              <div className="align-items-center">
+                {isFacultyOrAdmin && (
                   <>
                     <FaPencil
                       onClick={() =>
                         navigate(`/Kambaz/Courses/${assignment.course}/Assignments/${assignment._id}`)
                       }
-                      className="text-primary me-3"
+                      className="text-primary me-2"
                     />
-                    <FaTrash
-                      className="text-danger me-2 mb-1"
-                      onClick={() => dispatch(deleteAssignment(assignment._id))}
-                    />
+                    <AssignmentControlButtons assignmentId={assignment._id} deleteAssignment={(assignmentId) => removeAssignment(assignmentId)} />
                   </>
                 )}
-                <AssignmentControlButtons />
               </div>
             </ListGroup.Item>
           ))}

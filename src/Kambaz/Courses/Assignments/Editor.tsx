@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { addAssignment, updateAssignment } from "./reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
 
 export default function AssignmentEditor() {
   const { aid, cid } = useParams<{ aid: string; cid: string }>();
@@ -11,6 +13,26 @@ export default function AssignmentEditor() {
   const [assignment, setAssignment] = useState<any>({});
   const [editingMode, setEditingMode] = useState(false);
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+
+  const createAssignmentForCourse = async () => {
+    if (!cid) return;
+    const newAssignment = {
+      title: assignment.title,
+      description: assignment.description,
+      course: cid,
+      points: assignment.points,
+      due: assignment.due,
+      from: assignment.from,
+      until: assignment.until
+    };
+    const new_assignment = await coursesClient.createAssignmentForCourse(cid, newAssignment);
+    dispatch(addAssignment(new_assignment));
+  };
+
+  const saveAssignment = async (assignment: any) => {
+    await assignmentsClient.updateAssignment(assignment);
+    dispatch(updateAssignment(assignment));
+  };
 
   useEffect(() => {
     const foundAssignment = assignments.find((asmnt: any) => asmnt._id === aid);
@@ -24,17 +46,16 @@ export default function AssignmentEditor() {
     <div id="wd-assignments-editor">
       <FormGroup className="mb-3 wd-name" controlId="wd-textarea">
         <FormLabel>Assignment Name</FormLabel>
-        <FormControl as="textarea" rows={3} value={assignment?.title || ""} className="custom-textarea wd-name"
+        <FormControl style={{ width: 500 }} value={assignment?.title || ""} className="custom-textarea wd-name"
           onChange={(e) => setAssignment({ ...assignment, title: e.target.value })} />
       </FormGroup>
 
-      <FormGroup className="textarea-wrapper p-3 border rounded-3 wd-description" controlId="wd-textarea" style={{ height: '100px' }}>
-        <FormLabel>Assignment Description</FormLabel>
+      <FormGroup className="mb-3 wd-description" controlId="wd-textarea">
         <FormControl as="textarea" rows={3} value={assignment?.description || ""} className="custom-textarea wd-description"
           onChange={(e) => setAssignment({ ...assignment, description: e.target.value })} />
       </FormGroup>
+     
       <div>
-
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm={3} className="text-end wd-points"> Points </Form.Label>
           <Col sm={9}>
@@ -123,17 +144,9 @@ export default function AssignmentEditor() {
         <Button variant="danger" size="sm" className="me-1 float-end border-dark rounded-0" id="wd-save"
           onClick={() => {
             if (editingMode) {
-              dispatch(updateAssignment(assignment))
+              saveAssignment({ ...assignment, editing: false });
             } else {
-              dispatch(addAssignment({
-                title: assignment.title,
-                description: assignment.description,
-                course: cid,
-                points: assignment.points,
-                due: assignment.due,
-                from: assignment.from,
-                until: assignment.until
-              }));
+              createAssignmentForCourse();
             }
             navigate(`/Kambaz/Courses/${cid}/Assignments`);
           }}>
