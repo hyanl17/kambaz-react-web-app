@@ -87,7 +87,7 @@ export default function Assignments() {
                   <span>
                     | <b>Not available until</b>{" "}
                     <span>
-                      | <b>Not available until</b> May 6 at 12:00am | <b> Due</b> May 13 at 11:59pm | 100 pts
+                      | <b>Not available until</b> May 6 at 12:00am | <b> Due</b> May 13 at 11:59pm | 100
                     </span>
                     {assignment.pts} pts
                   </span>

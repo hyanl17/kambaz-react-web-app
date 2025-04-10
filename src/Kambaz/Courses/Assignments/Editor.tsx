@@ -3,7 +3,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { addAssignment, updateAssignment } from "./reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import * as coursesClient from "../client";
 import * as assignmentsClient from "./client";
 
 export default function AssignmentEditor() {
@@ -11,34 +10,31 @@ export default function AssignmentEditor() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [assignment, setAssignment] = useState<any>({});
-  const [editingMode, setEditingMode] = useState(false);
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
 
-  const createAssignmentForCourse = async () => {
-    if (!cid) return;
-    const newAssignment = {
-      title: assignment.title,
-      description: assignment.description,
-      course: cid,
-      points: assignment.points,
-      due: assignment.due,
-      from: assignment.from,
-      until: assignment.until
-    };
-    const new_assignment = await coursesClient.createAssignmentForCourse(cid, newAssignment);
-    dispatch(addAssignment(new_assignment));
+  const handleEdit = () => {
+    navigate(-1);
   };
-
-  const saveAssignment = async (assignment: any) => {
-    await assignmentsClient.updateAssignment(assignment);
-    dispatch(updateAssignment(assignment));
+  const handleSave = async () => {
+    if (assignment._id) {
+      await assignmentsClient.updateAssignment(assignment);
+      dispatch(updateAssignment(assignment));
+    } else {
+      if (cid) {
+        await assignmentsClient.createAssignmentForCourse({ ...assignment, cid });
+      }
+      dispatch(addAssignment(assignment));
+    }
+    handleEdit();
   };
+  const handleCancel = () => {
+    handleEdit();
+  }
 
   useEffect(() => {
     const foundAssignment = assignments.find((asmnt: any) => asmnt._id === aid);
     if (foundAssignment) {
       setAssignment(foundAssignment);
-      setEditingMode(true);
     }
   }, [aid, assignments]);
 
@@ -54,7 +50,7 @@ export default function AssignmentEditor() {
         <FormControl as="textarea" rows={3} value={assignment?.description || ""} className="custom-textarea wd-description"
           onChange={(e) => setAssignment({ ...assignment, description: e.target.value })} />
       </FormGroup>
-     
+
       <div>
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm={3} className="text-end wd-points"> Points </Form.Label>
@@ -137,22 +133,17 @@ export default function AssignmentEditor() {
       </div>
       <hr></hr>
       <div className="float-end d-flex">
-        <Link to={`/Kambaz/Courses/${cid}/Assignments`} className="wd-assignment-page-link">
-          <Button variant="secondary" size="sm" className="me-1 float-end border-dark rounded-0" id="wd-cancel">
+        <Link to={`/Kambaz/Courses/${cid}/Assignments`} className="me-1 float-end border-dark rounded-0" id="wd-cancel">
+          <Button variant="secondary" size="sm" onClick={() => { handleCancel() }}>
             Cancel
           </Button></Link>
-        <Button variant="danger" size="sm" className="me-1 float-end border-dark rounded-0" id="wd-save"
-          onClick={() => {
-            if (editingMode) {
-              saveAssignment({ ...assignment, editing: false });
-            } else {
-              createAssignmentForCourse();
-            }
-            navigate(`/Kambaz/Courses/${cid}/Assignments`);
-          }}>
-          Save
-        </Button>
+
+        <Link to={`/Kambaz/Courses/${cid}/Assignments`} className="me-1 float-end border-dark rounded-0" id="wd-save">
+          <Button variant="danger" size="sm" onClick={() => { handleSave() }}>
+            Save
+          </Button>
+        </Link>
       </div>
-    </div>
+    </div >
   )
 }
