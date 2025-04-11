@@ -37,7 +37,7 @@ export default function TOC() {
       </Nav.Item>
 
       <Nav.Item>
-        <Nav.Link href="https://kambaz-node-server-app-gtnq.onrender.com">Server</Nav.Link>
+        <Nav.Link href="https://kambaz-node-server-app-2-kwvp.onrender.com">Server</Nav.Link>
       </Nav.Item>
 
       <Nav.Item>
