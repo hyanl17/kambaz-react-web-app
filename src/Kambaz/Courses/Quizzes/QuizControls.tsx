@@ -19,6 +19,7 @@ export default function QuizControls({ courseId }: QuizControlsProps) {
     const createdQuiz = await quizClient.createQuiz(courseId, newQuiz);
     navigate(`/kambaz/Courses/${courseId}/Quizzes/${createdQuiz._id}`);
   }
+
   return (
     <div id="wd-quiz-controls" className="text-nowrap">
       {(currentUser.role === 'FACULTY' || currentUser.role === 'ADMIN') && (

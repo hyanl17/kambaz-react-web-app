@@ -17,6 +17,11 @@ const quizzesSlice = createSlice({
       };
       state.quizzes = [...state.quizzes, newQuiz] as any;
     },
+    updateQuiz: (state, { payload: quiz }) => {
+      state.quizzes = state.quizzes.map((a: any) =>
+        a._id === quiz._id ? quiz : a
+      ) as any;
+    },
     createQuestion: (state, { payload: quizId }) => {
       const quiz = state.quizzes.find((q: any) => q._id === quizId) as any;
       if (quiz) {
@@ -24,7 +29,7 @@ const quizzesSlice = createSlice({
           _id: new Date().getTime().toString(),
           name: "",
           type: "multiple-choice",
-          instructions: "",
+          description: "",
           answers: [{ id: 1, text: "" }],
         };
         quiz.questions = [...quiz.questions, newQuestion];
@@ -38,5 +43,5 @@ const quizzesSlice = createSlice({
     },
   },
 });
-export const { setQuizzes, createQuiz, createQuestion, deleteQuiz } = quizzesSlice.actions;
+export const { setQuizzes, createQuiz, createQuestion, deleteQuiz, updateQuiz } = quizzesSlice.actions;
 export default quizzesSlice.reducer;

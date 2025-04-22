@@ -47,6 +47,10 @@ export default function TOC() {
       <Nav.Item>
         <Nav.Link href="https://github.com/hyanl17/kambaz-node-server-app">Backend GitHub</Nav.Link>
       </Nav.Item>
+
+      <Nav.Item>
+        <Nav.Link href="https://youtu.be/UBogRq-kD-4?si=dYHeSZqxUJ99NGeP">Demo</Nav.Link>
+      </Nav.Item>
     </Nav>
   )
 }

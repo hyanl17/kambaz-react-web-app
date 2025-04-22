@@ -1,7 +1,8 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import * as quizClient from "./client";
-import "./QuizView.css";
+import "./styles.css";
 import { useSelector } from "react-redux";
 
 export default function QuizView() {
@@ -50,7 +51,6 @@ export default function QuizView() {
         }
       }
     };
-
     const fetchQuiz = async () => {
       if (qid) {
         try {
@@ -63,18 +63,9 @@ export default function QuizView() {
       }
       setLoading(false);
     };
-
     fetchQuiz();
     fetchQuestions();
   }, [qid]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!quiz) {
-    return <div>Quiz not found</div>;
-  }
 
   const renderQuestion = (question: any, index: number) => {
     if (!question) {
@@ -95,18 +86,17 @@ export default function QuizView() {
             case "Multiple Choice":
               return (
                 <ul className="options-list">
-                  {(quiz.shuffle_answers ? question.choices.sort(() => Math.random() - 0.5) : question.choices)
+                  {(quiz?.shuffle_answers ?
+                    [...(question.choices || [])].sort(() => Math.random() - 0.5) :
+                    question.choices || [])
                     .map((choice: string, index: number) => (
                       <li
                         key={`${question._id}-choice-${index}`}
                         className="option-item"
                       >
                         <input onChange={handleInputChange}
-                          type="radio"
-                          name={question._id}
-                          id={`option-${index}`}
-                          value={choice}
-                          className="radio-input"
+                          type="radio" name={question._id} id={`option-${index}`}
+                          value={choice} className="radio-input"
                         />
                         <label htmlFor={`option-${index}`}>{choice}</label>
                       </li>
@@ -118,19 +108,15 @@ export default function QuizView() {
                 <ul className="options-list">
                   <li className="option-item">
                     <input onChange={handleInputChange}
-                      type="radio"
-                      name={question._id}
-                      value="True"
-                      className="radio-input"
+                      type="radio" name={question._id}
+                      value="True" className="radio-input"
                     />
                     True
                   </li>
                   <li className="option-item">
                     <input onChange={handleInputChange}
-                      type="radio"
-                      name={question._id}
-                      value="False"
-                      className="radio-input"
+                      type="radio" name={question._id}
+                      value="False" className="radio-input"
                     />
                     False
                   </li>
@@ -140,10 +126,8 @@ export default function QuizView() {
               return (
                 <div>
                   <input onChange={handleInputChange}
-                    type="text"
-                    name={question._id}
-                    placeholder="Type your answer here"
-                    className="fill-blank-input"
+                    type="text" name={question._id}
+                    placeholder="Type your answer here" className="fill-blank-input"
                   />
                 </div>
               );
@@ -157,52 +141,62 @@ export default function QuizView() {
 
   const currentQuestion = questions[currentQuestionIndex];
 
+  if (!quiz && !loading) {
+    return <div className="quiz-container">Quiz not found</div>;
+  }
+
   return (
     <div className="quiz-container">
-      <h1 className="quiz-title">{quiz.name}</h1>
-      <p className="quiz-instructions">{quiz.instructions}</p>
-      <hr className="quiz-divider" />
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <>
+          <h1 className="quiz-title">{quiz?.title || "Untitled Quiz"}</h1>
+          <p className="quiz-description">{quiz?.description || ""}</p>
+          <hr className="quiz-divider" />
 
-      {quiz.one_at_a_time ? (
-        <div>
-          {currentQuestion ? (
-            renderQuestion(currentQuestion, currentQuestionIndex)
+          {quiz?.one_at_a_time ? (
+            <div>
+              {currentQuestion ? (
+                renderQuestion(currentQuestion, currentQuestionIndex)
+              ) : (
+                <p className="unknown-type">No question available</p>
+              )}
+              <div className="action-buttons">
+                <button
+                  className="action-button"
+                  disabled={currentQuestionIndex === 0}
+                  onClick={() => setCurrentQuestionIndex((prev) => prev - 1)}
+                >
+                  Previous
+                </button>
+                {currentQuestionIndex < questions.length - 1 ? (
+                  <button
+                    className="action-button"
+                    onClick={() => setCurrentQuestionIndex((prev) => prev + 1)}
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <div className="submit-quiz">
+                    <button onClick={handleSubmitQuiz} className="action-button">
+                      Submit Quiz
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           ) : (
-            <p className="unknown-type">No question available</p>
-          )}
-          <div className="action-buttons">
-            <button
-              className="action-button"
-              disabled={currentQuestionIndex === 0}
-              onClick={() => setCurrentQuestionIndex((prev) => prev - 1)}
-            >
-              Previous
-            </button>
-            {currentQuestionIndex < questions.length - 1 ? (
-              <button
-                className="action-button"
-                onClick={() => setCurrentQuestionIndex((prev) => prev + 1)}
-              >
-                Next
-              </button>
-            ) : (
+            <div>
+              {questions.map((question, index) => renderQuestion(question, index))}
               <div className="submit-quiz">
                 <button onClick={handleSubmitQuiz} className="action-button">
                   Submit Quiz
                 </button>
               </div>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div>
-          {questions.map((question, index) => renderQuestion(question, index))}
-          <div className="submit-quiz">
-            <button onClick={handleSubmitQuiz} className="action-button">
-              Submit Quiz
-            </button>
-          </div>
-        </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

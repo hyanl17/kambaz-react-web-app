@@ -7,7 +7,7 @@ import * as quizClient from "./client";
 import { setQuizzes } from "./reducer";
 import { useEffect } from "react";
 import { RxRocket } from "react-icons/rx";
-import QuizLessonControlButtons from "./QuizLessonControlButtons";
+import QuizControlButtons from "./QuizControlButtons";
 
 export default function Quizzes() {
   const { cid } = useParams<{ cid: string }>();
@@ -64,7 +64,7 @@ export default function Quizzes() {
             {quizzes.length === 0 && <li
               className="wd-lesson list-group-item p-3 ps-1 d-flex justify-content-between"
               style={{ width: "100%" }}>
-              No quizzes {currentUser.role === "FACULTY" && "press +Quiz to add quiz"}</li>}
+              {currentUser.role === "FACULTY" && "press +Quiz to add quiz"}</li>}
             {quizzes.map((quiz: any) => (
               <li
                 className="wd-lesson list-group-item p-3 ps-1 d-flex justify-content-between"
@@ -77,7 +77,7 @@ export default function Quizzes() {
                 <div className="flex-grow-1 px-2">
                   <a className="wd-quiz-link link-dark text-decoration-none"
                     href={`#/kambaz/Courses/${cid}/Quizzes/${quiz._id}`}>
-                    <b>{quiz.name}</b>
+                    <b>{quiz.title}</b>
                   </a>
                   <p>
                     <b>{checkAvailableDate(quiz.available, quiz.until)}</b>
@@ -88,7 +88,7 @@ export default function Quizzes() {
                 </div>
                 <div className="align-content-center justify-content-end">
                   {(currentUser.role === 'FACULTY' || currentUser.role === 'ADMIN') && (
-                    <QuizLessonControlButtons courseId={cid || ''} quizId={quiz._id.toString()} published={quiz.published} />)}
+                    <QuizControlButtons courseId={cid || ''} quizId={quiz._id.toString()} published={quiz.published} />)}
                 </div>
               </li>
             ))

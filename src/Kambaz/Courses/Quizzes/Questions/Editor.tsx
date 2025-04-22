@@ -1,11 +1,13 @@
 import { ChangeEvent, useEffect, useState } from "react";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { FaPlus, FaTrash, FaPencilAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as questionClient from "./client";
 import { setQuestions, addQuestion, deleteQuestion, updateQuestion } from "./reducer";
 
-export default function QuestionEditor() {
+export default function Editor() {
   const { cid, qid } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -13,6 +15,23 @@ export default function QuestionEditor() {
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const [editingQuestion, setEditingQuestion] = useState<any>(null);
   const [originalQuestion, setOriginalQuestion] = useState<any>(null);
+
+  const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['link', 'image'],
+      ['clean']
+    ],
+  };
+
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet',
+    'link', 'image'
+  ];
 
   const fetchQuestions = async () => {
     if (!qid) return;
@@ -24,6 +43,7 @@ export default function QuestionEditor() {
     const questionData = {
       type: "Multiple Choice",
       title: "New Question",
+      question: "",
       choices: [""]
     };
     dispatch(addQuestion(questionData));
@@ -31,8 +51,6 @@ export default function QuestionEditor() {
     setEditingQuestionId(newQuestionId);
     setEditingQuestion({ _id: newQuestionId, ...questionData });
     setOriginalQuestion({ _id: newQuestionId, ...questionData });
-    // await questionClient.createQuestion(qid as string, questionData);
-    // Add new question to the list
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -41,7 +59,18 @@ export default function QuestionEditor() {
     setEditingQuestion((prev: any) => {
       if (prev) {
         const updatedQuestion = { ...prev, [name]: type === "checkbox" ? checked : value };
-        dispatch(updateQuestion(updatedQuestion)); // Dispatch the updateQuestion action
+        dispatch(updateQuestion(updatedQuestion));
+        return updatedQuestion;
+      }
+      return prev;
+    });
+  };
+
+  const handleDescriptionChange = (value: string) => {
+    setEditingQuestion((prev: any) => {
+      if (prev) {
+        const updatedQuestion = { ...prev, question: value };
+        dispatch(updateQuestion(updatedQuestion));
         return updatedQuestion;
       }
       return prev;
@@ -54,7 +83,7 @@ export default function QuestionEditor() {
       newChoices[index] = e.target.value;
       const updatedQuestion = { ...editingQuestion, choices: newChoices };
       setEditingQuestion(updatedQuestion);
-      dispatch(updateQuestion(updatedQuestion)); // Dispatch the updateQuestion action
+      dispatch(updateQuestion(updatedQuestion));
     }
   };
 
@@ -62,7 +91,7 @@ export default function QuestionEditor() {
     if (editingQuestion) {
       const updatedQuestion = { ...editingQuestion, answer: choice };
       setEditingQuestion(updatedQuestion);
-      dispatch(updateQuestion(updatedQuestion)); // Dispatch the updateQuestion action
+      dispatch(updateQuestion(updatedQuestion));
     }
   };
 
@@ -71,29 +100,26 @@ export default function QuestionEditor() {
       const newChoices = editingQuestion.choices.filter((_: any, index: any) => index !== choiceIndex);
       const updatedQuestion = { ...editingQuestion, choices: newChoices };
       setEditingQuestion(updatedQuestion);
-      dispatch(updateQuestion(updatedQuestion)); // Dispatch the updateQuestion action
+      dispatch(updateQuestion(updatedQuestion));
     }
   };
 
-  console.log(questions);
   const handleAddChoice = () => {
     if (editingQuestion) {
       const newChoices = [...editingQuestion.choices, ""];
       const updatedQuestion = { ...editingQuestion, choices: newChoices };
       setEditingQuestion(updatedQuestion);
-      dispatch(updateQuestion(updatedQuestion)); // Dispatch the updateQuestion action
+      dispatch(updateQuestion(updatedQuestion));
     }
   };
 
   const handleSave = async () => {
     const existingQuestions = await questionClient.findQuestionsForQuiz(qid as string);
 
-    // Determine which questions have been deleted
     const deletedQuestions = existingQuestions.filter(
       (existingQuestion: any) => !questions.find((question: any) => question._id === existingQuestion._id)
     );
 
-    // delete those questions
     deletedQuestions.map(async (question: any) => {
       await questionClient.deleteQuestion(question._id);
     });
@@ -116,7 +142,6 @@ export default function QuestionEditor() {
 
   return (
     <div className="wd-question-editor">
-      {/* List of Questions */}
       <ul className="wd-question-list list-group mt-3">
         {questions.map((question: any) => (
           <li key={question._id} className="list-group-item mb-3 border border-dark rounded-1">
@@ -136,26 +161,17 @@ export default function QuestionEditor() {
             {editingQuestionId === question._id && (
               <div className="mt-3">
                 <div className="form-group mb-3">
-                  <label className="form-label" htmlFor="question-name"><b>Name</b></label>
+                  <label className="form-label" htmlFor="question-title"><b>Name</b></label>
                   <input
-                    type="text"
-                    className="form-control"
-                    id="question-name"
-                    name="title"
-                    value={question?.title || ""}
-                    onChange={handleInputChange}
-                  />
+                    type="text" className="form-control" id="question-title" name="title"
+                    value={question?.title || ""} onChange={handleInputChange} />
                 </div>
                 <div className="form-group mb-3 d-flex justify-content-between">
                   <div className="w-50">
                     <label className="form-label" htmlFor="question-type"><b>Question Type</b></label>
                     <select
-                      className="form-control"
-                      id="question-type"
-                      value={question?.type || ""}
-                      name="type"
-                      onChange={handleInputChange}
-                    >
+                      className="form-control" id="question-type" name="type"
+                      value={question?.type || ""} onChange={handleInputChange}>
                       <option value="Multiple Choice">Multiple Choice</option>
                       <option value="True/False">True/False</option>
                       <option value="Fill-in-the-Blank">Fill in the Blank</option>
@@ -164,48 +180,36 @@ export default function QuestionEditor() {
                   <div className="w-25">
                     <label className="form-label" htmlFor="question-points"><b>Points</b></label>
                     <input
-                      type="number"
-                      className="form-control"
-                      id="question-points"
-                      value={question?.points || ""}
-                      name="points"
-                      onChange={handleInputChange}
-                    />
+                      type="number" className="form-control" id="question-points" name="points"
+                      value={question?.points || ""} onChange={handleInputChange} />
                   </div>
                 </div>
                 <div className="form-group mb-3">
-                  <label className="form-label" htmlFor="question-instructions"><b>Question</b></label>
-                  <textarea
-                    className="form-control"
-                    id="question-instructions"
+                  <label className="form-label" htmlFor="question-description"><b>Question</b></label>
+                  <ReactQuill
+                    theme="snow"
                     value={question?.question || ""}
-                    name="question"
-                    onChange={handleInputChange}
-                  ></textarea>
+                    onChange={handleDescriptionChange}
+                    modules={modules}
+                    formats={formats}
+                    className="bg-white"
+                  />
                 </div>
                 <div className="form-group mb-3">
                   <label className="form-label"><b>Potential Answers</b></label>
                   {editingQuestion?.type === "Multiple Choice" && editingQuestion.choices.map((choice: any, index: any) => (
                     <div key={index} className="input-group mb-2">
                       <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Answer"
-                        value={choice}
-                        name="choices"
-                        onChange={(e) => handleChoiceInputChange(e, index)}
-                      />
+                        type="text" className="form-control" placeholder="Answer" name="choices"
+                        value={choice} onChange={(e) => handleChoiceInputChange(e, index)} />
                       <div className="input-group-text">
                         <input
-                          type="radio"
-                          name="answer"
-                          checked={choice === editingQuestion.answer}
-                          onChange={(e) => handleRadioChange(e, choice)}
+                          type="radio" name="answer"
+                          checked={choice === editingQuestion.answer} onChange={(e) => handleRadioChange(e, choice)}
                         />
                       </div>
                       <button
-                        type="button"
-                        className="btn btn-danger"
+                        type="button" className="btn btn-danger"
                         onClick={() => handleDeleteChoice(index)}
                       >
                         <FaTrash />
@@ -216,26 +220,16 @@ export default function QuestionEditor() {
                     <div>
                       <div className="form-check">
                         <input
-                          id="wd-question-true-input"
-                          className="form-check-input"
-                          type="checkbox"
-                          name="answer"
-                          checked={question.answer === "True"}
-                          onChange={(e) => handleRadioChange(e, "True")}
-                        />
+                          id="wd-question-true-input" className="form-check-input" type="checkbox" name="answer"
+                          checked={question.answer === "True"} onChange={(e) => handleRadioChange(e, "True")} />
                         <label className="form-check-label" htmlFor="wd-question-true-input">
                           True
                         </label>
                       </div>
                       <div className="form-check">
                         <input
-                          id="wd-question-false-input"
-                          className="form-check-input"
-                          type="checkbox"
-                          name="answer"
-                          checked={question.answer === "False"}
-                          onChange={(e) => handleRadioChange(e, "False")}
-                        />
+                          id="wd-question-false-input" className="form-check-input" type="checkbox" name="answer"
+                          checked={question.answer === "False"} onChange={(e) => handleRadioChange(e, "False")} />
                         <label className="form-check-label" htmlFor="wd-question-false-input">
                           False
                         </label>
@@ -245,18 +239,11 @@ export default function QuestionEditor() {
                   {question?.type === "Fill-in-the-Blank" && question.choices.map((choice: any, index: any) => (
                     <div key={index} className="input-group mb-2">
                       <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Correct Answer"
-                        value={choice}
-                        name="choices"
-                        onChange={(e) => handleChoiceInputChange(e, index)}
-                      />
+                        type="text" className="form-control" placeholder="Correct Answer" value={choice}
+                        name="choices" onChange={(e) => handleChoiceInputChange(e, index)} />
                       <button
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={() => handleDeleteChoice(index)}
-                      >
+                        type="button" className="btn btn-danger"
+                        onClick={() => handleDeleteChoice(index)} >
                         <FaTrash />
                       </button>
                     </div>
@@ -302,7 +289,6 @@ export default function QuestionEditor() {
           New Question
         </button>
       </div>
-      {/* Save and Cancel buttons */}
       <hr />
       <div className="d-flex float-end">
         <Link to={`/kambaz/Courses/${cid}/Quizzes`}>

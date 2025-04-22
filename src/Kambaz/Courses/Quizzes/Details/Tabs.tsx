@@ -1,6 +1,6 @@
 import { useState } from "react";
 import DetailsEditor from "./Editor";
-import QuestionEditor from "../Questions/QuestionEditor";
+import QuestionEditor from "../Questions/Editor";
 import { useSelector } from "react-redux";
 
 export default function Tabs() {
@@ -24,8 +24,7 @@ export default function Tabs() {
           <a
             className={`nav-link ${activeTab === "details" ? "active" : "text-danger"}`}
             data-bs-toggle="tab"
-            onClick={() => setActiveTab("details")}
-          >
+            onClick={() => setActiveTab("details")}>
             Details
           </a>
         </li>
@@ -33,8 +32,7 @@ export default function Tabs() {
           <a
             className={`nav-link ${activeTab === "questions" ? "active" : "text-danger"}`}
             data-bs-toggle="tab"
-            onClick={() => setActiveTab("questions")}
-          >
+            onClick={() => setActiveTab("questions")}>
             Questions
           </a>
         </li>
